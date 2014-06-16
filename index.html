@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js"></script>
+<script src="wps-js.0.1.js"></script>
+<link type="text/css" rel="stylesheet" href="css/wps-js.css">
+<title>wps-js demo</title>
+<link rel="shortcut icon" href="http://52north.org/templates/52n-2012/favicon.ico" />
+
+<style>
+body {
+	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+	margin: 3em;
+}
+
+/* fork me banner: */
+.github-fork-ribbon {
+	/* The right and left classes determine the side we attach our banner to */
+	position: absolute;
+	/* Add a bit of padding to give some substance outside the "stitching" */
+	padding: 2px 0;
+	/* Set the base colour */
+	background-color: #66C5E4;
+	/* Set a gradient: transparent black at the top to almost-transparent black at the bottom */
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)),
+		to(rgba(0, 0, 0, 0.15)));
+	background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0),
+		rgba(0, 0, 0, 0.15));
+	background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0),
+		rgba(0, 0, 0, 0.15));
+	background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0),
+		rgba(0, 0, 0, 0.15));
+	background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0),
+		rgba(0, 0, 0, 0.15));
+	background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0),
+		rgba(0, 0, 0, 0.15));
+	/* Add a drop shadow */
+	-webkit-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.5);
+	box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.5);
+	z-index: 9999;
+	pointer-events: auto;
+}
+
+.github-fork-ribbon a,.github-fork-ribbon a:hover {
+	/* Set the font */
+	font: 700 13px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: #fff;
+	/* Set the text properties */
+	text-decoration: none;
+	text-shadow: 0 -1px rgba(0, 0, 0, 0.5);
+	text-align: center;
+	/* Set the geometry. If you fiddle with these you'll also need
+	 to tweak the top and right values in .github-fork-ribbon. */
+	width: 200px;
+	line-height: 20px;
+	/* Set the layout properties */
+	display: inline-block;
+	padding: 2px 0;
+	/* Add "stitching" effect */
+	border-width: 1px 0;
+	border-style: dotted;
+	border-color: #fff;
+	border-color: rgba(255, 255, 255, 0.7);
+}
+
+.github-fork-ribbon-wrapper {
+	width: 150px;
+	height: 150px;
+	position: absolute;
+	overflow: hidden;
+	top: 0;
+	z-index: 9999;
+	pointer-events: none;
+}
+
+.github-fork-ribbon-wrapper.right {
+	right: 0;
+}
+
+.github-fork-ribbon-wrapper.right .github-fork-ribbon {
+	top: 42px;
+	right: -43px;
+	-webkit-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	-o-transform: rotate(45deg);
+	transform: rotate(45deg);
+}
+</style>
+</head>
+<body>
+	<div class="github-fork-ribbon-wrapper right">
+		<div class="github-fork-ribbon">
+			<a href="https://github.com/52North/wps-js">Fork me on GitHub</a>
+		</div>
+	</div>
+	<div id="wrapper">
+		<div>
+			<h1>wps-js demo</h1>
+			<p>wps-js is an <a href="https://github.com/52North/wps-js/" title="wps-js on GitHub">open source client library</a> for connecting Javascript client to <a href="http://www.opengeospatial.org/standards/wps" title="WPS @ Open Geospatial Consortium">OGC Web Processing</a> services. This page demonstrates how you can use it. More documentation is available in the <a href="https://wiki.52north.org/bin/view/Geoprocessing/Wps-js" title="wps-js wiki page">52&deg;North Wiki</a> and on <a href="https://github.com/52North/wps-js/blob/master/README.md" title="wps-js readme">GitHub</a>.</p>
+		</div>
+		<hr>
+		<div>
+			<h3>WPS Server</h3>
+			<select id="wps">
+				<option>Select a WPS</option>
+				<option>http://geoviqua.stcorp.nl/wps</option>
+				<option>http://geoprocessing.demo.52north.org:8080/wps/WebProcessingService</option>
+				<option>http://localhost:8080/wps/WebProcessingService</option>
+				<!-- pyWPS: -->
+				<option>http://openwps.statkart.no/skwms1/wps.elevation</option>
+			</select>
+		</div>
+		<div>
+			<h3>Capabilities <a href="#" id="wpscaller">Show Capabilities</a></h3>
+			<div class="wps-container">
+				<div id="capabilitiesByClick"></div>
+			</div>
+		</div>
+		<div>
+			<h3>Execute Process</h3>
+			<div class="wps-container">
+				<select id="processes"><option>Select a process</option></select>
+				<span id="processDescriptionLink"></span>
+				<div class="wps-execute-container" id="wps-execute-container"></div>
+			</div>
+			<p></p>
+			<div class="wps-container">
+				<div id="executeProcess"></div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var capabilities, // the capabilities, read by Format.WPSCapabilities::read
+		process; // the process description from Format.WPSDescribeProcess::read
+
+		$('#wpscaller').click(function() {
+			var sel = document.getElementById("wps");
+			
+			$('#capabilitiesByClick').wpsCall({
+				url : sel.options[sel.selectedIndex].text,
+				requestType : GET_CAPABILITIES_TYPE
+			});
+		});
+		$(document).ready(function() {
+			$.wpsSetup({
+				proxy : {
+					url : "http://geoviqua.dev.52north.org/wps_proxy/wps_proxy?url=",
+					type : "parameter"
+				}
+			});
+		});
+
+		// add behavior to html elements
+		document.getElementById("processes").onchange = function() {
+			var sel = document.getElementById("processes");
+			
+			describeProcess(sel.options[sel.selectedIndex].text);
+		};
+		document.getElementById("wps").onchange = function() {
+			var sel = document.getElementById("wps");
+			
+			getCapabilities(sel.options[sel.selectedIndex].text);
+		};
+		
+	</script>
+
+	<div>
+		<p class="infotext">Based on wps-js-0.1 | &copy; 2014 52&deg;North</p>
+	</div>
+</body>
+</html>
