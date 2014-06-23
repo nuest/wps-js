@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -108,11 +108,13 @@ body {
 			<h3>WPS Server</h3>
 			<select id="wps">
 				<option>Select a WPS</option>
-				<option>http://geoviqua.stcorp.nl/wps</option>
+				<!--<option>http://geoviqua.stcorp.nl/wps</option>-->
 				<option>http://geoprocessing.demo.52north.org:8080/wps/WebProcessingService</option>
-				<option>http://localhost:8080/wps/WebProcessingService</option>
+				<option>http://geoprocessing.demo.52north.org:8081/enviroCar-wps/WebProcessingService</option>
+				<option title="Geoserver Demo WPS">http://demo.opengeo.org/geoserver/wps</option>
+				<!--<option>http://localhost:8080/wps/WebProcessingService</option>-->
 				<!-- pyWPS: -->
-				<option>http://openwps.statkart.no/skwms1/wps.elevation</option>
+				<option title="pyWPS provided by http://www.statkart.no/ - the Norwegian Mapping Authority">http://openwps.statkart.no/skwms1/wps.elevation</option>
 			</select>
 		</div>
 		<div>
@@ -147,12 +149,7 @@ body {
 			});
 		});
 		$(document).ready(function() {
-			$.wpsSetup({
-				proxy : {
-					url : "http://geoviqua.dev.52north.org/wps_proxy/wps_proxy?url=",
-					type : "parameter"
-				}
-			});
+			$.wpsSetup({});
 		});
 
 		// add behavior to html elements
@@ -171,6 +168,18 @@ body {
 
 	<div>
 		<p class="infotext">Based on wps-js-0.1 | &copy; 2014 52&deg;North</p>
+	</div>
+	
+	<hr>
+	<div>
+		<h3>Example requests (under construction)</h3>
+		<ul>
+			<li><strong>52&deg;North Demo WPS</strong>: cooming soon...</li>
+			<li><strong>Geoserver WPS</strong>: Choose the Geoserver Demo WPS and follow these instructions: <a href="http://geoserver.geo-solutions.it/edu/en/wps/demo_builder.html">http://geoserver.geo-solutions.it/edu/en/wps/demo_builder.html</a></li>
+			<li><strong>Statkart open WPS</strong>: Choose process "elevation" and enter the coordinates of a landmark in Norway (e.g. <a href="http://en.wikipedia.org/wiki/List_of_mountains_in_Norway_by_height">mountains</a> such as <code>61.636111, 8.312222</code>), and execute the process. The result server does not allow CORS requests, so you have to copy and paste the URL in the error message to a new browser window.<br>
+			Found via <a href="http://blog.thematicmapping.org/2014/06/expedition-mapping-finding-name-and.html">http://blog.thematicmapping.org/2014/06/expedition-mapping-finding-name-and.html</a>
+			</li>
+		</ul>
 	</div>
 </body>
 </html>
